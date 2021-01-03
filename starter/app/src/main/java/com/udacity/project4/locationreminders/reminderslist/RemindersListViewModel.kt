@@ -1,20 +1,33 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.udacity.project4.base.BaseViewModel
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.launch
 
+
 class RemindersListViewModel(
-    app: Application,
-    private val dataSource: ReminderDataSource
+    private val app: Application,
+    private val dataSource: ReminderDataSource,
+    private val firebaseAuth: FirebaseAuth
 ) : BaseViewModel(app) {
+
+
+
     // list that holds the reminder data to be displayed on the UI
     val remindersList = MutableLiveData<List<ReminderDataItem>>()
+
+
 
     /**
      * Get all the reminders from the DataSource and add them to the remindersList to be shown on the UI,
@@ -49,6 +62,25 @@ class RemindersListViewModel(
             //check if no data has to be shown
             invalidateShowNoData()
         }
+    }
+
+    fun signOut(){
+        if(firebaseAuth.currentUser != null){
+            signOutFb()
+        }else{
+            signOutGoogle()
+        }
+    }
+
+    private fun signOutFb() {
+        firebaseAuth.signOut()
+    }
+
+    private fun signOutGoogle() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+
+        val googleSignInClient = GoogleSignIn.getClient(app.applicationContext, gso)
+        googleSignInClient.signOut()
     }
 
     /**

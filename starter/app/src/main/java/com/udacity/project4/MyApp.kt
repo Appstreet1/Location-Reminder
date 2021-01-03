@@ -1,7 +1,9 @@
 package com.udacity.project4
 
 import android.app.Application
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseAuth
+import com.udacity.project4.authentication.AuthenticationViewModel
 import com.udacity.project4.authentication.RegistrationViewModel
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
@@ -26,25 +28,20 @@ class MyApp : Application() {
             viewModel {
                 RemindersListViewModel(
                     app = get(),
-                    dataSource = get() as ReminderDataSource
+                    dataSource = get() as ReminderDataSource,
+                    firebaseAuth = get()
                 )
             }
             viewModel { RegistrationViewModel(firebaseAuth = get()) }
+            viewModel { AuthenticationViewModel(firebaseAuth = get(), app = get()) }
 
             //Declare singleton definitions to be later injected using by inject()
-            single {
-                //This view model is declared singleton to be used across multiple fragments
-                SaveReminderViewModel(
-                    app = get(),
-                    dataSource = get() as ReminderDataSource
-                )
-            }
+            //This view model is declared singleton to be used across multiple fragments
+            single { SaveReminderViewModel(app = get(), dataSource = get() as ReminderDataSource) }
             single { RemindersLocalRepository(get()) as ReminderDataSource }
             single { LocalDB.createRemindersDao(this@MyApp) }
             single { FirebaseAuth.getInstance() }
         }
-
-
 
         startKoin {
             androidContext(this@MyApp)

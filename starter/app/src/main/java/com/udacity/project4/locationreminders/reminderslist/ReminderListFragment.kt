@@ -1,9 +1,12 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import com.udacity.project4.R
+import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
@@ -12,14 +15,16 @@ import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+
 class ReminderListFragment : BaseFragment() {
+
     //use Koin to retrieve the ViewModel instance
     override val _viewModel: RemindersListViewModel by viewModel()
     private lateinit var binding: FragmentRemindersBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -63,7 +68,6 @@ class ReminderListFragment : BaseFragment() {
     private fun setupRecyclerView() {
         val adapter = RemindersListAdapter {
         }
-
 //        setup the recycler view using the extension function
         binding.reminderssRecyclerView.setup(adapter)
     }
@@ -71,17 +75,20 @@ class ReminderListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-//                TODO: add the logout implementation
+                _viewModel.signOut()
+                navigateToAuthScreen()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
 
+    private fun navigateToAuthScreen(){
+        val intent = Intent(activity, AuthenticationActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-//        display logout as menu item
         inflater.inflate(R.menu.main_menu, menu)
     }
-
 }

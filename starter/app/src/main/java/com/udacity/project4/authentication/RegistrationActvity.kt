@@ -1,10 +1,12 @@
 package com.udacity.project4.authentication
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.udacity.project4.R
+import com.udacity.project4.locationreminders.RemindersActivity
 import kotlinx.android.synthetic.main.activity_registration.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -24,12 +26,20 @@ class RegistrationActvity : AppCompatActivity() {
     private fun observeRegistrationStatus() {
         registrationViewModel.registrationStatus.observe(this, Observer { status ->
             when (status) {
-                RegistrationViewModel.RegistrationStatus.Success ->
+                RegistrationViewModel.RegistrationStatus.Success -> {
                     Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
+                    navigateToReminderScreen()
+                }
                 RegistrationViewModel.RegistrationStatus.Error ->
                     Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun navigateToReminderScreen() {
+        val intent = Intent(this@RegistrationActvity, RemindersActivity::class.java)
+
+        startActivity(intent)
     }
 
     private fun initOnClick() {
