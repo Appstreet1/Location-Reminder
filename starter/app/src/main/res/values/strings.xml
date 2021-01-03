@@ -40,4 +40,11 @@
     <string name="geofence_too_many_geofences">Your app has registered too many geofences.</string>
     <string name="geofence_too_many_pending_intents">You have provided too many PendingIntents to the addGeofences() call.</string>
     <string name="error_adding_geofence">Error Happened, Can\'t Add Geofence</string>
+    <string name="sign_in_with_email">Sign In with Email</string>
+    <string name="sign_in_with_google">Sign In with Google</string>
+    <string name="create_account">Create account</string>
+    <string name="sign_up_email">sign up email</string>
+    <string name="sign_up_google">sign up google</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
 </resources>
