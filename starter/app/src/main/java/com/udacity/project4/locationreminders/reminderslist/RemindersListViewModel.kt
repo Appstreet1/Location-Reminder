@@ -22,11 +22,8 @@ class RemindersListViewModel(
     private val firebaseAuth: FirebaseAuth
 ) : BaseViewModel(app) {
 
-
-
     // list that holds the reminder data to be displayed on the UI
     val remindersList = MutableLiveData<List<ReminderDataItem>>()
-
 
 
     /**
