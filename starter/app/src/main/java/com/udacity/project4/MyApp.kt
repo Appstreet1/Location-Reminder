@@ -28,8 +28,7 @@ class MyApp : Application() {
             viewModel {
                 RemindersListViewModel(
                     app = get(),
-                    dataSource = get() as ReminderDataSource,
-                    firebaseAuth = get()
+                    dataSource = get() as ReminderDataSource
                 )
             }
             viewModel { RegistrationViewModel(firebaseAuth = get()) }

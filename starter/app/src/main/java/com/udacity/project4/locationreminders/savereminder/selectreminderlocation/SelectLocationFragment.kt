@@ -3,11 +3,11 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.icu.text.Transliterator
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -19,14 +19,17 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.Task
+import com.google.android.gms.maps.model.PointOfInterest
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
+import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
+import com.udacity.project4.locationreminders.reminderslist.ReminderListFragmentDirections
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragmentDirections
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
-import java.util.jar.Manifest
+import java.lang.Exception
 
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -35,9 +38,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private lateinit var lastLocation: Location
-    private lateinit var selectedPosition : LatLng
+    private lateinit var selectedLocation: PointOfInterest
 
-    //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
 
     private lateinit var binding: FragmentSelectLocationBinding
@@ -53,25 +55,28 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
 
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
-
-
-//        TODO: call this function after the user confirms on the selected location
-        onLocationSelected()
+        initOnLocationSelected()
 
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
+    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        setUpMap()
+        setUpMap(mMap)
     }
 
-    private fun setUpMap() {
+    private fun setUpMap(map: GoogleMap) {
         if (ActivityCompat.checkSelfPermission(
                 activity!!,
                 android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -84,14 +89,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
             return
         }
         moveToCurrentLocation()
-        mMap.setOnMapClickListener {
-            mMap.addMarker(MarkerOptions().position(it))
-            selectedPosition = it
+
+        mMap.setOnPoiClickListener { poi ->
+            val poiMarker = map.addMarker(
+                MarkerOptions()
+                    .position(poi.latLng)
+                    .title(poi.name)
+            )
+            selectedLocation = poi
+            Log.i("TEST", selectedLocation.name + " " + selectedLocation.latLng)
+            poiMarker.showInfoWindow()
         }
     }
 
     @SuppressLint("MissingPermission")
-    private fun moveToCurrentLocation(){
+    private fun moveToCurrentLocation() {
         mMap.isMyLocationEnabled = true
 
         fusedLocationClient.lastLocation.addOnSuccessListener(activity!!) { location ->
@@ -99,15 +111,13 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
                 lastLocation = location
                 val currentLatLng = LatLng(location.latitude, location.longitude)
                 placeMarkerOnMap(currentLatLng)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16f))
             }
         }
     }
 
     private fun placeMarkerOnMap(location: LatLng) {
-        // 1
         val markerOptions = MarkerOptions().position(location)
-        // 2
         mMap.addMarker(markerOptions)
     }
 
@@ -120,10 +130,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
         moveToCurrentLocation()
     }
 
-    private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+    private fun initOnLocationSelected() {
+        binding.saveButton.setOnClickListener {
+            try {
+                _viewModel.selectedPOI.value = selectedLocation
+                navigateToAddReminder()
+            } catch (e: Exception) {
+                Toast.makeText(activity, "select a location", Toast.LENGTH_SHORT).show()
+                Log.i("TEST", e.toString())
+            }
+        }
+    }
+
+    private fun navigateToAddReminder() {
+        _viewModel.navigationCommand.value =
+            NavigationCommand.Back
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

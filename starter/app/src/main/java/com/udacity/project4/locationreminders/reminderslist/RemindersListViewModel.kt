@@ -19,8 +19,7 @@ import kotlinx.coroutines.launch
 
 class RemindersListViewModel(
     private val app: Application,
-    private val dataSource: ReminderDataSource,
-    private val firebaseAuth: FirebaseAuth
+    private val dataSource: ReminderDataSource
 ) : BaseViewModel(app) {
 
     // list that holds the reminder data to be displayed on the UI
@@ -72,17 +71,6 @@ class RemindersListViewModel(
             .addOnCompleteListener {
                 _loggedOut.value = true
             }
-    }
-
-    private fun signOutFb() {
-        firebaseAuth.signOut()
-    }
-
-    private fun signOutGoogle() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-
-        val googleSignInClient = GoogleSignIn.getClient(app.applicationContext, gso)
-        googleSignInClient.signOut()
     }
 
     /**
