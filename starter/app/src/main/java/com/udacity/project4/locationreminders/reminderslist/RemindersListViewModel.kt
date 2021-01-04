@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +26,10 @@ class RemindersListViewModel(
     // list that holds the reminder data to be displayed on the UI
     val remindersList = MutableLiveData<List<ReminderDataItem>>()
 
+    val loggedOut: LiveData<Boolean>
+        get() = _loggedOut
+
+    private val _loggedOut = MutableLiveData<Boolean>()
 
     /**
      * Get all the reminders from the DataSource and add them to the remindersList to be shown on the UI,
@@ -61,12 +66,12 @@ class RemindersListViewModel(
         }
     }
 
-    fun signOut(){
-        if(firebaseAuth.currentUser != null){
-            signOutFb()
-        }else{
-            signOutGoogle()
-        }
+    fun signOut() {
+        AuthUI.getInstance()
+            .signOut(app.applicationContext)
+            .addOnCompleteListener {
+                _loggedOut.value = true
+            }
     }
 
     private fun signOutFb() {

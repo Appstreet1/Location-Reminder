@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import com.udacity.project4.R
 import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
@@ -25,11 +26,8 @@ class ReminderListFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =
-            DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_reminders, container, false
-            )
+
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_reminders, container, false)
         binding.viewModel = _viewModel
 
         setHasOptionsMenu(true)
@@ -45,15 +43,23 @@ class ReminderListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
         setupRecyclerView()
-        binding.addReminderFAB.setOnClickListener {
-            navigateToAddReminder()
-        }
+
+        binding.addReminderFAB.setOnClickListener {navigateToAddReminder()}
+
+        observeLoggedStatus()
     }
 
     override fun onResume() {
         super.onResume()
-        //load the reminders list on the ui
         _viewModel.loadReminders()
+    }
+
+    private fun observeLoggedStatus() {
+        _viewModel.loggedOut.observe(viewLifecycleOwner, Observer { loggedOut ->
+            if (loggedOut) {
+                navigateToAuthScreen()
+            }
+        })
     }
 
     private fun navigateToAddReminder() {
@@ -76,13 +82,12 @@ class ReminderListFragment : BaseFragment() {
         when (item.itemId) {
             R.id.logout -> {
                 _viewModel.signOut()
-                navigateToAuthScreen()
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun navigateToAuthScreen(){
+    private fun navigateToAuthScreen() {
         val intent = Intent(activity, AuthenticationActivity::class.java)
         startActivity(intent)
     }
