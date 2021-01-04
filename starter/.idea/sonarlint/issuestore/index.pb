@@ -59,3 +59,11 @@ P
 ^app/src/main/java/com/udacity/project4/locationreminders/savereminder/SaveReminderViewModel.kt,3\7\37cd167cee92ce67358665e1341605524c528d3c
 ¦
 vapp/src/main/java/com/udacity/project4/locationreminders/savereminder/selectreminderlocation/SelectLocationFragment.kt,1\7\17866d22e15ed33d78f43f69073f8f6e7d685357
+{
+Kapp/src/main/java/com/udacity/project4/locationreminders/data/dto/Result.kt,9\3\935f28647bfa920de6bd586d5ec3d996a25d3710
+€
+Papp/src/main/java/com/udacity/project4/locationreminders/data/dto/ReminderDTO.kt,8\5\857f48f0024512bf41868ee21aa2f27fa3483550
+Ž
+^app/src/main/java/com/udacity/project4/locationreminders/geofence/GeofenceBroadcastReceiver.kt,c\e\ceb11f023f5e8e4296620f533c66fabdb66b4fbc
+˜
+happ/src/main/java/com/udacity/project4/locationreminders/geofence/GeofenceTransitionsJobIntentService.kt,f\d\fd8084b1177a2300473d2a0983c748d230f964bc

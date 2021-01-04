@@ -14,6 +14,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import kotlin.math.sin
 
 class MyApp : Application() {
 
@@ -40,6 +41,7 @@ class MyApp : Application() {
             single { RemindersLocalRepository(get()) as ReminderDataSource }
             single { LocalDB.createRemindersDao(this@MyApp) }
             single { FirebaseAuth.getInstance() }
+            single { RemindersLocalRepository(get()) }
         }
 
         startKoin {
