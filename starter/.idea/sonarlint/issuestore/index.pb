@@ -69,3 +69,5 @@ Papp/src/main/java/com/udacity/project4/locationreminders/data/dto/ReminderDTO.k
 happ/src/main/java/com/udacity/project4/locationreminders/geofence/GeofenceTransitionsJobIntentService.kt,f\d\fd8084b1177a2300473d2a0983c748d230f964bc
 ^
 .app/src/main/java/com/udacity/project4/test.kt,9\2\92f2650fa0ff782518ad81fcee796e001fb102c0
+@
+local.properties,0\7\0712df971a99ac4d2fccb8e0fb19f377f3374cca
