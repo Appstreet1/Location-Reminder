@@ -14,6 +14,7 @@ import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.sendNotification
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
+import org.koin.core.logger.KOIN_TAG
 import kotlin.coroutines.CoroutineContext
 
 class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
@@ -25,7 +26,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
     companion object {
         private const val JOB_ID = 573
 
-        //        TODO: call this to start the JobIntentService to handle the geofencing transition events
+        //call this to start the JobIntentService to handle the geofencing transition events
         fun enqueueWork(context: Context, intent: Intent) {
             enqueueWork(
                 context,
@@ -36,41 +37,41 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
     }
 
     override fun onHandleWork(intent: Intent) {
+            val geofencingEvent = GeofencingEvent.fromIntent(intent)
+            if (geofencingEvent.hasError()) {
+                Log.i("TEST", geofencingEvent.errorCode.toString())
+                return
+            }
+            val triggeringGeofences: MutableList<Geofence> = mutableListOf()
+            if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
+                geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
+            ) {
+                Log.i("TEST", "Geofence entered")
 
-        val geofencingEvent = GeofencingEvent.fromIntent(intent)
-        if (geofencingEvent.hasError()) {
-            Log.i("TEST", geofencingEvent.errorCode.toString())
-            return
-        }
-        val triggeringGeofences: MutableList<Geofence> = mutableListOf()
-        if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-            geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
-        ) {
-            Log.i("TEST", "Geofence entered")
+                if (geofencingEvent.triggeringGeofences.isNotEmpty()) {
+                    triggeringGeofences.add(geofencingEvent.triggeringGeofences[0])
+                    sendNotification(triggeringGeofences)
+                } else {
+                    Log.e("TEST", "No Geofence Trigger Found")
+                    return
+                }
+            }
+    }
 
-            if (geofencingEvent.triggeringGeofences.isNotEmpty()) {
-                triggeringGeofences.add(geofencingEvent.triggeringGeofences[0])
-                sendNotification(triggeringGeofences)
-            } else {
-                Log.e("TEST", "No Geofence Trigger Found")
+    private fun sendNotification(triggeringGeofences: List<Geofence>) {
+        val requestId = when {
+            triggeringGeofences.isNotEmpty() -> {
+                triggeringGeofences[0].requestId
+            }
+            else -> {
+                Log.e(KOIN_TAG, "No geofence found")
                 return
             }
         }
-        //TODO: handle the geofencing transition events and
-        // send a notification to the user when he enters the geofence area
-        //TODO call @sendNotification
-    }
 
-    //TODO: get the request id of the current geofence
-    private fun sendNotification(triggeringGeofences: List<Geofence>) {
-        var requestId = ""
-
-        if (triggeringGeofences.isNotEmpty()) {
-            requestId = triggeringGeofences[0].requestId
-        }else{
-            Log.i("TEST", "no geofence")
+        if (requestId.isNullOrBlank()) {
+            return
         }
-
 
         //Get the local repository instance
         val remindersLocalRepository: RemindersLocalRepository by inject()
