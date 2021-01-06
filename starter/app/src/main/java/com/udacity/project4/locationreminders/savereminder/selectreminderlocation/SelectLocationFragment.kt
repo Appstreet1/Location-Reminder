@@ -5,10 +5,12 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -54,33 +56,32 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         initOnLocationSelected()
 
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
-    }
-
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         setUpMap(mMap)
         setMapStyle(mMap)
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun setUpMap(map: GoogleMap) {
         if (ActivityCompat.checkSelfPermission(
-                activity!!,
+                requireActivity(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissions(
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ), LOCATION_PERMISSION_REQUEST_CODE
             )
             return
         }
@@ -93,24 +94,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
                     .title(poi.name)
             )
             selectedLocation = poi
-            Log.i("TEST", selectedLocation.name + " " + selectedLocation.latLng)
             poiMarker.showInfoWindow()
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun moveToCurrentLocation() {
-        mMap.isMyLocationEnabled = true
 
-        fusedLocationClient.lastLocation.addOnSuccessListener(activity!!) { location ->
-            if (location != null) {
-                lastLocation = location
-                val currentLatLng = LatLng(location.latitude, location.longitude)
-                placeMarkerOnMap(currentLatLng)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16f))
-            }
-        }
-    }
 
     private fun placeMarkerOnMap(location: LatLng) {
         val markerOptions = MarkerOptions().position(location)
@@ -123,7 +111,22 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        Log.i("TEST", "onResult()")
         moveToCurrentLocation()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun moveToCurrentLocation() {
+        mMap.isMyLocationEnabled = true
+
+        fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
+            if (location != null) {
+                lastLocation = location
+                val currentLatLng = LatLng(location.latitude, location.longitude)
+                placeMarkerOnMap(currentLatLng)
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16f))
+            }
+        }
     }
 
     private fun initOnLocationSelected() {
@@ -132,7 +135,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
                 _viewModel.selectedPOI.value = selectedLocation
                 navigateToAddReminder()
             } catch (e: Exception) {
-                Toast.makeText(activity, "select a location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireActivity(), "select a location", Toast.LENGTH_SHORT).show()
                 Log.i("TEST", e.toString())
             }
         }
@@ -153,7 +156,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnM
             // in a raw resource file.
             val success = map.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
-                    activity,
+                    requireActivity(),
                     R.raw.map_style
                 )
             )

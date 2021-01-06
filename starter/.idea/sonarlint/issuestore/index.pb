@@ -71,3 +71,8 @@ happ/src/main/java/com/udacity/project4/locationreminders/geofence/GeofenceTrans
 .app/src/main/java/com/udacity/project4/test.kt,9\2\92f2650fa0ff782518ad81fcee796e001fb102c0
 @
 local.properties,0\7\0712df971a99ac4d2fccb8e0fb19f377f3374cca
+i
+9app/src/main/java/com/udacity/project4/utils/Constants.kt,5\a\5a444d2848c136ac9fd85e914b2394944ddf9b14
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302

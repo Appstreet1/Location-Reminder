@@ -46,7 +46,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
             if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
             ) {
-                Log.i("TEST", "Geofence entered")
+                Log.i("TEST", "Geofence entered" + geofencingEvent.geofenceTransition.toString())
 
                 if (geofencingEvent.triggeringGeofences.isNotEmpty()) {
                     triggeringGeofences.add(geofencingEvent.triggeringGeofences[0])

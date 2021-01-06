@@ -50,7 +50,6 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     }
 
 
-
     /**
      * Save the reminder to the data source
      */

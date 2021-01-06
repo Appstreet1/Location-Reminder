@@ -9,9 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import com.google.android.gms.location.Geofence
-import com.google.android.gms.location.GeofencingClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -20,7 +18,7 @@ import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
-import com.google.android.gms.location.GeofencingRequest
+import com.google.android.gms.maps.SupportMapFragment
 
 class SaveReminderFragment : BaseFragment() {
 
@@ -38,6 +36,7 @@ class SaveReminderFragment : BaseFragment() {
 
         binding.viewModel = _viewModel
 
+
         return binding.root
     }
 
@@ -46,10 +45,9 @@ class SaveReminderFragment : BaseFragment() {
         binding.lifecycleOwner = this
 
 
-        geofencingClient = LocationServices.getGeofencingClient(activity!!)
+        geofencingClient = LocationServices.getGeofencingClient(requireActivity())
 
         initOnClick()
-
     }
 
     private fun initOnClick() {
@@ -61,8 +59,7 @@ class SaveReminderFragment : BaseFragment() {
             val reminder = getUserInput()
 
             if (_viewModel.enteredData(reminder)) {
-                _viewModel.validateAndSaveReminder(reminder)
-                addGeofence(reminder)
+                addGeofenceAndSaveReminder(reminder)
             }
         }
     }
@@ -91,21 +88,16 @@ class SaveReminderFragment : BaseFragment() {
 
     private val ACTION_GEOFENCE_EVENT = "LocationReminderApp.action.ACTION_GEOFENCE_EVENT"
 
-    private val GEOFENCE_RADIUS_IN_METERS = 100f
+    private val GEOFENCE_RADIUS_IN_METERS = 50f
 
     private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(activity?.applicationContext, GeofenceBroadcastReceiver::class.java)
+        val intent = Intent(requireActivity().applicationContext, GeofenceBroadcastReceiver::class.java)
         intent.action = ACTION_GEOFENCE_EVENT
-        PendingIntent.getBroadcast(
-            activity?.applicationContext,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        PendingIntent.getBroadcast(requireActivity(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     @SuppressLint("MissingPermission")
-    private fun addGeofence(reminder: ReminderDataItem?) {
+    private fun addGeofenceAndSaveReminder(reminder: ReminderDataItem?) {
 
         if (reminder != null) {
             val geofence = Geofence.Builder()
@@ -124,11 +116,10 @@ class SaveReminderFragment : BaseFragment() {
 
             geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent).run {
                 addOnSuccessListener {
-                    Log.i("TEST", "added geofences" + reminder.latitude + " " + reminder.longitude)
+                    _viewModel.validateAndSaveReminder(reminder)
                 }
                 addOnFailureListener {
                     Log.i("TEST", "failed geofences")
-
                 }
             }
         }
