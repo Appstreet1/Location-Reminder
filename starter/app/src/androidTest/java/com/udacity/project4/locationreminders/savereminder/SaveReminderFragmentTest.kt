@@ -52,7 +52,6 @@ class SaveReminderFragmentTest {
 
         scenario.onFragment { Navigation.setViewNavController(it.view!!, navController) }
 
-
         onView(withId(R.id.selectLocation)).perform(click())
 
         verify(navController).navigate(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
