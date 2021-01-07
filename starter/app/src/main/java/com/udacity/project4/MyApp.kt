@@ -1,10 +1,8 @@
 package com.udacity.project4
 
 import android.app.Application
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.authentication.AuthenticationViewModel
-import com.udacity.project4.authentication.RegistrationViewModel
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
@@ -14,7 +12,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import kotlin.math.sin
 
 class MyApp : Application() {
 
@@ -32,7 +29,6 @@ class MyApp : Application() {
                     dataSource = get() as ReminderDataSource
                 )
             }
-            viewModel { RegistrationViewModel(firebaseAuth = get()) }
             viewModel { AuthenticationViewModel(firebaseAuth = get(), app = get()) }
 
             //Declare singleton definitions to be later injected using by inject()

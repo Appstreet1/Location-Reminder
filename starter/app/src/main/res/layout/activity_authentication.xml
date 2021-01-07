@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".authentication.AuthenticationActivity">
 
+    <Button
+        android:id="@+id/auth_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:text="@string/create_account"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.998"
+        tools:layout_editor_absoluteX="16dp" />
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
@@ -27,9 +38,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
-        android:layout_marginBottom="224dp"
         android:text="@string/login"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="46dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.925"
+        tools:layout_editor_absoluteX="-13dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
