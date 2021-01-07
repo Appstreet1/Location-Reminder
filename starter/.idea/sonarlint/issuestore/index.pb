@@ -76,3 +76,23 @@ i
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
+}
+Mapp/src/test/java/com/udacity/project4/locationreminders/LiveDataTestUtils.kt,3\4\34458243cd471b6abf705ecab155bea512665e93
+Ž
+^app/src/androidTest/java/com/udacity/project4/locationreminders/data/local/RemindersDaoTest.kt,1\b\1b2e1ffa770ad0f6973d85e0775ff507825c0ce5
+š
+japp/src/androidTest/java/com/udacity/project4/locationreminders/data/local/RemindersLocalRepositoryTest.kt,8\7\87d05c5c479d0d955d3160910e71f8c72434d5c8
+v
+Fapp/src/androidTest/java/com/udacity/project4/RemindersActivityTest.kt,e\2\e2f0cf97aed23bf928b606a7179b083cd13282cb
+}
+Mapp/src/test/java/com/udacity/project4/locationreminders/MainCoroutineRule.kt,b\9\b9553d5a5b4b8fac8d077669738045b4ef2fa3da
+”
+dapp/src/test/java/com/udacity/project4/locationreminders/reminderslist/RemindersListViewModelTest.kt,4\9\49b6c850619f9fae2db51a5ba1b0fc71e31b2471
+™
+iapp/src/androidTest/java/com/udacity/project4/locationreminders/reminderslist/ReminderListFragmentTest.kt,4\0\40e3980221012d74381a21ed91c3487a71b475a3
+˜
+happ/src/androidTest/java/com/udacity/project4/locationreminders/savereminder/SaveReminderFragmentTest.kt,4\b\4bcc1491b04a68d5d8e7699bd379e6fc748d4efd
+
+Oapp/src/test/java/com/udacity/project4/locationreminders/data/FakeDataSource.kt,e\0\e0bab9c51b5d6ee00b1b7a76172676403055fd82
+’
+bapp/src/test/java/com/udacity/project4/locationreminders/savereminder/SaveReminderViewModelTest.kt,0\e\0e04996524a45e7d830bb34ce8e8c188d1f3eca2

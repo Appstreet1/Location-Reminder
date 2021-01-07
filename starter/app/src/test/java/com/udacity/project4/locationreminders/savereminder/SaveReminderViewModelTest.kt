@@ -10,6 +10,7 @@ import com.udacity.project4.R
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.data.dto.Result
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
+import org.hamcrest.core.IsEqual
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -67,12 +69,15 @@ class SaveReminderViewModelTest {
         saveReminderViewModel.onClear()
 
         //then
-        assertThat(saveReminderViewModel.reminderTitle.getOrAwaitValue(), `is` (nullValue()))
-        assertThat(saveReminderViewModel.reminderDescription.getOrAwaitValue(), `is` (nullValue()))
-        assertThat(saveReminderViewModel.reminderSelectedLocationStr.getOrAwaitValue(), `is` (nullValue()))
-        assertThat(saveReminderViewModel.selectedPOI.getOrAwaitValue(), `is` (nullValue()))
-        assertThat(saveReminderViewModel.latitude.getOrAwaitValue(), `is` (nullValue()))
-        assertThat(saveReminderViewModel.longitude.getOrAwaitValue(), `is` (nullValue()))
+        assertThat(saveReminderViewModel.reminderTitle.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(saveReminderViewModel.reminderDescription.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(
+            saveReminderViewModel.reminderSelectedLocationStr.getOrAwaitValue(),
+            `is`(nullValue())
+        )
+        assertThat(saveReminderViewModel.selectedPOI.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(saveReminderViewModel.latitude.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(saveReminderViewModel.longitude.getOrAwaitValue(), `is`(nullValue()))
     }
 
     @Test
@@ -129,7 +134,7 @@ class SaveReminderViewModelTest {
     }
 
     @Test
-    fun check_loading() = mainCoroutineRule.runBlockingTest{
+    fun check_loading() = mainCoroutineRule.runBlockingTest {
 
         val reminder = ReminderDataItem("title", "desc", "loc", 0.0, 0.0)
 
@@ -143,9 +148,20 @@ class SaveReminderViewModelTest {
         assertThat(showLoadingAfter, `is`(false))
     }
 
-//    @Test
-//    fun noReminders_callError(){
-//        dataSource.setReturnError(true)
-//        dataSource.deleteAllReminders()
-//    }
+    @Test
+    fun enteredData_noLocation_shoudReturnError() = mainCoroutineRule.runBlockingTest{
+        dataSource.setReturnError(true)
+
+        val title = "title"
+        val reminderDataItem = ReminderDataItem(
+            title, null, null,
+            null, null
+        )
+        saveReminderViewModel.validateAndSaveReminder(reminderDataItem)
+
+        assertThat(
+            saveReminderViewModel.showSnackBarInt.getOrAwaitValue(),
+            `is`(R.string.err_select_location)
+        )
+    }
 }
